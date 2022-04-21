@@ -8,25 +8,25 @@ In scaling machine learning use cases, a data scientist can pair with multiple d
 # Setup
 ```
 docker-compose up --build
+# or 
+docker-compose up --force-recreate --build
 ```
 
-# Inhouse ML Patterns
+
+# teardown
+https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes
+```
+docker-compose down --volumes
+docker rm -f $(docker ps -a -q)
+docker volume rm $(docker volume ls -q)
+```
+
+# Inhouse ML Usage
 ```SQL
-CREATE FUNCTION ihml_get_dataset_describe(name text, features text[], labels text[])
-    RETURNS JSON
-AS
-$$
-   from inhouseml import tfRunner
-   job = tfRunner(name=name, features=features, labels=labels)
-   job.load_dataset(plpy.execute(job.get_query()))
-   return job.get_dataset_describe()
-$$ LANGUAGE plpython3u;
+-- Describe a dataset
+SELECT * FROM ml_dataset_describe('autompg', ARRAY ['horsepower','cylinders'], ARRAY ['mpg']);
 
-
-SELECT * FROM ihml_get_dataset_describe('autompg', ARRAY ['horsepower','cylinders'], ARRAY ['mpg']);
-
-DROP FUNCTION ihml_get_dataset_describe;
-
+DROP FUNCTION ml_dataset_describe;
 ```
 
 # Project Idea & Plan
